@@ -10,18 +10,41 @@ class Camera {
 
         this.viewMatrix = mat4.create();
         this.projViewMatrix = mat4.create();
-        this.translate(-0.0, 0.0, -6.0);
+
+        this.position = { x: -0.0, y: 0, z: -6.0 };
+        this.rotation = 0.0;
+
+        var transform = mat4.create();
+        mat4.translate(transform, transform, [this.position.x, this.position.y, this.position.z]);
+        mat4.rotate(transform, transform, this.rotation, [0, 0, 1]);
+        this.viewMatrix = transform;
         mat4.multiply(this.projViewMatrix, this.projectionMatrix, this.viewMatrix);
     }
 
-    translate(x, y, z) {
-        mat4.translate(this.viewMatrix, this.viewMatrix, [x, y, z]);
+    setPosition(x, y, z) {
+        this.position = { x: x, y: y, z: z };
+        var transform = mat4.create();
+        mat4.translate(transform, transform, [this.position.x, this.position.y, this.position.z]);
+        mat4.rotate(transform, transform, this.rotation, [0, 0, 1]);
+        this.viewMatrix = transform;
         mat4.multiply(this.projViewMatrix, this.projectionMatrix, this.viewMatrix);
     }
 
-    rotate(x, y, z) {
-        mat4.rotate(this.viewMatrix, this.viewMatrix, [x, y, z]);
+    setRotation(r) {
+        this.rotation = r;
+        var transform = mat4.create();
+        mat4.translate(transform, transform, [this.position.x, this.position.y, this.position.z]);
+        mat4.rotate(transform, transform, this.rotation, [0, 0, 1]);
+        this.viewMatrix = transform;
         mat4.multiply(this.projViewMatrix, this.projectionMatrix, this.viewMatrix);
+    }
+
+    getPosition() {
+        return this.position;
+    }
+
+    getRotation() {
+        return this.rotation;
     }
 
     getProjectionViewMat() {

@@ -1,6 +1,7 @@
-var drawable;
+var world;
 var camera;
 var inputManager;
+var drawable;
 
 function main() {
     const gl = initGL("webGLCanvas", function() {
@@ -43,26 +44,30 @@ function main() {
         }
     };
 
-    var then = 0;
+    world = new World(gl, programInfo, camera, 20, 20, "Boi World");
+    world.setTile(0, 0, 0);
+    world.setTile(1, 0, 0);
 
-    inputManager = new InputManager();
-    camera = new Camera(gl);
-    drawable = new Drawable(gl, "../sauce/sauce.png", programInfo, camera, inputManager);
+    var inputManager = new InputManager();
+    //drawable = new TestTile(gl, programInfo, camera, inputManager);
+    var then = 0;
 
     function render(now) {
         now *= 0.001;
         const deltaTime = now - then;
         then = now;
 
-        //drawScene(gl, programInfo, buffers, texture, deltaTime);
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clearColor(0.5, 0.5, 0.5, 1.0);
         gl.clearDepth(1.0);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        drawable.tick(deltaTime);
-        drawable.draw();
+        world.tick(deltaTime);
+        world.render();
+
+        //drawable.tick(deltaTime);
+        //drawable.render();
 
         requestAnimationFrame(render);
     }
@@ -140,6 +145,8 @@ function initGL(canvasID, errorCallback) {
     }
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
+    inputManager = new InputManager();
+    camera = new Camera(gl);
     return gl;
 }
 

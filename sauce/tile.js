@@ -1,5 +1,5 @@
-class Drawable {
-    constructor(gl, textureUrl, programInfo, camera, inputManager) {
+class Tile {
+    constructor(gl, textureUrl, programInfo, camera, id) {
         this.programInfo = programInfo;
         this.texture = loadTexture(gl, textureUrl);
         this.gl = gl;
@@ -7,26 +7,22 @@ class Drawable {
         this.modelMatrix = mat4.create();
         this.camera = camera;
         this.buffers = initBuffers(gl);
-        this.inputManager = inputManager;
         this.speed = 5;
+        this.id = id;
+
+        this.position = { x: 0.0, y: 0.0, z: 0.0 };
+        this.rotation = 0.0;
+    }
+
+    getId() {
+        return this.id;
     }
 
     tick(deltaTime) {
-        if (this.inputManager.isKeyDown('KeyD')) {
-            this.translate(this.speed * deltaTime, 0, 0);
-        }
-        if (this.inputManager.isKeyDown('KeyW')) {
-            this.translate(0, this.speed * deltaTime, 0);
-        }
-        if (this.inputManager.isKeyDown('KeyA')) {
-            this.translate(-this.speed * deltaTime, 0, 0);
-        }
-        if (this.inputManager.isKeyDown('KeyS')) {
-            this.translate(0, -this.speed * deltaTime, 0);
-        }
+
     }
 
-    draw() {
+    render() {
         {
             const numComponents = 2;
             const type = this.gl.FLOAT;
@@ -54,7 +50,7 @@ class Drawable {
         this.gl.useProgram(this.programInfo.program);
 
         var mvp = mat4.create();
-        mat4.multiply(mvp, this.modelMatrix, this.camera.getProjectionViewMat());
+        mat4.multiply(mvp, this.camera.getProjectionViewMat(), this.modelMatrix);
         this.gl.uniformMatrix4fv(this.programInfo.uniformLocations.uMVP, false, mvp);
 
         this.gl.activeTexture(this.gl.TEXTURE0);
@@ -68,8 +64,29 @@ class Drawable {
         }
     }
 
-    translate(x, y, z) {
-        mat4.translate(this.modelMatrix, this.modelMatrix, [x, y, z]);
+    setPosition(x, y, z) {
+        this.position = { x: x, y: y, z: z };
+        var transform = mat4.create();
+        mat4.translate(transform, transform, [this.position.x, this.position.y, this.position.z]);
+        mat4.rotate(transform, transform, this.rotation, [0, 0, 1]);
+        this.modelMatrix = transform;
+        //mat4.translate(this.modelMatrix, this.modelMatrix, [x, y, z]);
+    }
+
+    setRotation(r) {
+        this.rotation = r;
+        var transform = mat4.create();
+        mat4.translate(transform, transform, [this.position.x, this.position.y, this.position.z]);
+        mat4.rotate(transform, transform, this.rotation, [0, 0, 1]);
+        this.modelMatrix = transform;
+    }
+
+    getPosition() {
+        return this.position;
+    }
+
+    getRotation() {
+        return this.rotation;
     }
 }
 
@@ -91,7 +108,6 @@ function loadTexture(gl, url) {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, image);
 
-        console.log(image.width + " " + image.height + " " + (isPowerOf2(image.width) && isPowerOf2(image.height)));
         if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
             gl.generateMipmap(gl.TEXTURE_2D);
         } else {

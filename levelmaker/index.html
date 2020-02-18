@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level maker</title>
+</head>
+
+<body style="margin: 0 !important; padding: 0 !important; overflow: hidden;">
+    <div style="display: none;">
+        <img src="/res/textures/brick_blue.png" id="brick_blue">
+        <img src="/res/textures/sauce.png" id="sauce">
+    </div>
+
+    <div id="overlay" style="position: fixed; z-index: 2; cursor: pointer;">
+        <select id="tileDropdown" onchange="changeTile(value)">
+            <option value="0">Test</option>
+            <option value="1">Test2</option>
+        </select>
+        <input type="text" id="name" value="World name">
+        <button id="exportWorld">Export world</button>
+    </div>
+
+    <canvas id="gridCanvas"></canvas>
+    <script src="/levelmaker/main.js"></script>
+</body>
+
+</html>

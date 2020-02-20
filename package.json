@@ -1,0 +1,19 @@
+{
+  "name": "webglsauce",
+  "version": "1.0.0",
+  "description": "WebGL game engine",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Quartzy0/WebGLSauce.git"
+  },
+  "author": "Quartzy0",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Quartzy0/WebGLSauce/issues"
+  },
+  "homepage": "https://github.com/Quartzy0/WebGLSauce#readme"
+}

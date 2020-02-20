@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/Quartzy0/WebGLSauce/issues"
   },
-  "homepage": "https://github.com/Quartzy0/WebGLSauce#readme"
+  "homepage": "https://github.com/Quartzy0/WebGLSauce#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "javascript-obfuscator": "^0.24.6"
+  }
 }

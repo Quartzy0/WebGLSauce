@@ -117,7 +117,7 @@ function loadTexture(gl, url) {
         }
     };
 
-    image.src = url;
+    image.src = "/assets/textures/" + url;
 
     return texture;
 }

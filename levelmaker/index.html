@@ -5,12 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Level maker</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" type="application/javascript"></script>
 </head>
 
 <body style="margin: 0 !important; padding: 0 !important; overflow: hidden;">
     <div style="display: none;">
-        <img src="/res/textures/brick_blue.png" id="brick_blue">
-        <img src="/res/textures/sauce.png" id="sauce">
+        <img src="/assets/textures/brick_blue.png" id="brick_blue">
+        <img src="/assets/textures/sauce.png" id="sauce">
     </div>
 
     <div id="overlay" style="position: fixed; z-index: 2; cursor: pointer;">
@@ -20,10 +21,11 @@
         </select>
         <input type="text" id="name" value="World name">
         <button id="exportWorld">Export world</button>
+        <p id="err"></p>
     </div>
 
     <canvas id="gridCanvas"></canvas>
-    <script src="/levelmaker/main.js"></script>
+    <script src="/scripts/levelmaker"></script>
 </body>
 
 </html>

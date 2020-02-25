@@ -1,5 +1,5 @@
-class Tile {
-    constructor(gl, textureUrl, programInfo, camera, id) {
+class Entity {
+    constructor(handler, textureUrl, width, height, position, name, id) {
         this.programInfo = programInfo;
         this.texture = loadTexture(gl, textureUrl);
         this.gl = gl;
@@ -7,19 +7,19 @@ class Tile {
         this.modelMatrix = mat4.create();
         this.camera = camera;
         this.buffers = initBuffers(gl);
-        this.speed = 5;
         this.id = id;
+        this.health = 0;
+        this.uuid = uuidv4();
+        this.handler = handler;
 
-        this.position = { x: 0.0, y: 0.0, z: 0.0 };
+        this.position = position;
         this.rotation = 0.0;
     }
 
-    getId() {
-        return this.id;
-    }
-
     tick(deltaTime) {
-
+        if (this.health <= 0) {
+            this.handler.currentWorld.removeEntity(this.uuid);
+        }
     }
 
     render() {
@@ -70,7 +70,6 @@ class Tile {
         mat4.translate(transform, transform, [this.position.x, this.position.y, this.position.z]);
         mat4.rotate(transform, transform, this.rotation, [0, 0, 1]);
         this.modelMatrix = transform;
-        //mat4.translate(this.modelMatrix, this.modelMatrix, [x, y, z]);
     }
 
     setRotation(r) {
@@ -90,38 +89,8 @@ class Tile {
     }
 }
 
-function loadTexture(gl, url) {
-    const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-
-    const level = 0;
-    const internalFormat = gl.RGBA;
-    const width = 1;
-    const height = 1;
-    const boreder = 0;
-    const srcFormat = gl.RGBA;
-    const srcType = gl.UNSIGNED_BYTE;
-    const pixel = new Uint8Array([0, 0, 255, 255]);
-    gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, boreder, srcFormat, srcType, pixel);
-    const image = new Image();
-    image.onload = function() {
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, image);
-
-        if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
-            gl.generateMipmap(gl.TEXTURE_2D);
-        } else {
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_2, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        }
-    };
-
-    image.src = "/assets/textures/" + url;
-
-    return texture;
-}
-
-function isPowerOf2(value) {
-    return (value & (value - 1)) == 0;
+function uuidv4() {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
 }

@@ -1,11 +1,13 @@
 class World {
-    constructor(gl, programInfo, camera, width, height, name) {
-        this.gl = gl;
+    constructor(handler, width, height, name) {
+        this.handler = handler;
+        this.gl = handler.gl;
         this.tiles = createArray(height, width);
+        this.entities = [];
         this.name = name;
 
-        this.programInfo = programInfo;
-        this.camera = camera;
+        this.programInfo = handler.programInfo;
+        this.camera = handler.camera;
 
         this.tileSize = 2;
     }
@@ -19,6 +21,9 @@ class World {
                 }
             }
         }
+        this.entities.forEach(entity => {
+            entity.tick(deltaTime);
+        });
     }
 
     render() {
@@ -29,12 +34,15 @@ class World {
                 }
             }
         }
+        this.entities.forEach(entity => {
+            entity.render();
+        });
     }
 
     getTileById(id) {
         switch (id) {
             case 0:
-                return new BrickTile(this.gl, this.programInfo, this.camera);
+                return new BrickTile(this.handler);
         }
         return null;
     }
@@ -49,6 +57,23 @@ class World {
 
     getTiles() {
         return this.tiles;
+    }
+
+    getEntities() {
+        return this.entities;
+    }
+
+    addEntity(entity) {
+        this.entities.push(entity);
+    }
+
+    removeEntity(uuid) {
+        for (let i = 0; i < this.entities.length; i++) {
+            if (this.entities[i].uuid === uuid) {
+                this.entities.splice(i, 1);
+                return;
+            }
+        }
     }
 }
 

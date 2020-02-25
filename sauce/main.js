@@ -2,6 +2,7 @@ var world;
 var camera;
 var inputManager;
 var drawable;
+var handler;
 
 function main() {
     const gl = initGL("webGLCanvas", function() {
@@ -44,11 +45,27 @@ function main() {
         }
     };
 
-    world = new World(gl, programInfo, camera, 20, 20, "Boi World");
+    handler = {
+        camera: camera,
+        shaderInfo: programInfo,
+        inputManager: inputManager,
+        gl: gl
+    };
+
+    world = new World(handler, 20, 20, "Boi World");
     world.setTile(0, 0, 0);
     world.setTile(1, 0, 0);
+    world.setTile(2, 0, 0);
+    world.setTile(3, 0, 0);
+    world.setTile(4, 0, 0);
+    world.setTile(5, 0, 0);
+    world.setTile(6, 0, 0);
+    world.setTile(7, 0, 0);
+    world.setTile(8, 0, 0);
+    world.setTile(9, 0, 0);
 
-    var inputManager = new InputManager();
+    handler.currentWorld = world;
+
     //drawable = new TestTile(gl, programInfo, camera, inputManager);
     var then = 0;
 
@@ -63,8 +80,8 @@ function main() {
         gl.depthFunc(gl.LEQUAL);
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        world.tick(deltaTime);
-        world.render();
+        handler.currentWorld.tick(deltaTime);
+        handler.currentWorld.render();
 
         //drawable.tick(deltaTime);
         //drawable.render();
@@ -75,7 +92,7 @@ function main() {
     requestAnimationFrame(render);
 }
 
-function initBuffers(gl) {
+function initBuffers(gl, width, height) {
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
@@ -91,9 +108,9 @@ function initBuffers(gl) {
 
     const textureCoordinates = [
         0.0, 0.0,
-        1.0, 0.0,
-        0.0, 1.0,
-        1.0, 1.0
+        width, 0.0,
+        0.0, height,
+        width, height
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),

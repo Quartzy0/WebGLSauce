@@ -60,44 +60,21 @@ function changeTile(value) {
 
 function exportWorld() {
     var worldObj = { w: (bw / 40) | 0, h: (bh / 40) | 0, name: document.getElementById("name").value, tiles: tileGrid };
-    console.log("Yay");
 
-    copyToClipboard(JSON.stringify(worldObj));
-}
-
-function copyToClipboard(data) {
-    // create hidden text element, if it doesn't already exist
-    var targetId = "_hiddenCopyText_";
-    // must use a temporary form element for the selection and copy
-    target = document.getElementById(targetId);
-    if (!target) {
-        var target = document.createElement("textarea");
-        target.style.position = "absolute";
-        target.style.left = "-9999px";
-        target.style.top = "0";
-        target.id = targetId;
-        document.body.appendChild(target);
-    }
-    target.textContent = data;
-    // select the content
-    var currentFocus = document.activeElement;
-    target.focus();
-    target.setSelectionRange(0, target.value.length);
-
-    // copy the selection
-    var succeed;
-    try {
-        succeed = document.execCommand("copy");
-    } catch (e) {
-        succeed = false;
-    }
-    // restore original focus
-    if (currentFocus && typeof currentFocus.focus === "function") {
-        currentFocus.focus();
-    }
-    // clear temporary content
-    target.textContent = "";
-    return succeed;
+    $.ajax({
+        type: "POST",
+        url: "/saveLevel",
+        data: { name: worldObj.name, data: worldObj },
+        dataType: "application/json",
+        success: function(response) {
+            console.log(response);
+            if (response === "Success") {
+                window.open(window.location.origin + "/getLevel/" + worldObj.name);
+            } else {
+                document.getElementById("err").innerText = response;
+            }
+        }
+    });
 }
 
 document.getElementById("exportWorld").onclick = exportWorld;

@@ -26,7 +26,7 @@ const obferscationConfig = {
     unicodeEscapeSequence: false
 };
 
-const shoudObfercsteCode = false;
+const shoudObfercsteCode = true;
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
@@ -102,7 +102,7 @@ app.get('/scripts/sauce', function(req, res) {
         res.set('Content-Type', 'text/javascript');
         if (shoudObfercsteCode) {
             let obferscated = javaScriptObfuscator.obfuscate(data, obferscationConfig);
-            res.send(obferscated.getObfuscatedCode());
+            res.status(200).send(obferscated.getObfuscatedCode());
         } else {
             res.status(200).send(data);
         }
@@ -184,11 +184,11 @@ function combineFiles(dir, done) {
                 const split = (data + "").split("\n")[0].split(" ");
                 if (split.includes("extends")) {
                     if (!priorityThings[split[3].toUpperCase()]) {
-                        priorityThings[split[3].toUpperCase()] = { done: false, filesToDo: [result] };
+                        priorityThings[split[3].toUpperCase()] = { done: false, filesToDo: [data] };
                         return;
                     }
                     if (!priorityThings[split[3].toUpperCase()].done) {
-                        priorityThings[split[3].toUpperCase()].filesToDo.push(result);
+                        priorityThings[split[3].toUpperCase()].filesToDo.push(data);
                         return;
                     }
                 }
@@ -200,43 +200,18 @@ function combineFiles(dir, done) {
                     priorityThings[a1.substr(0, a1.lastIndexOf("."))].done = true;
                 }
                 finalData += data;
+                priorityThings[a1.substr(0, a1.lastIndexOf("."))].filesToDo.forEach(element => {
+                    finalData += element;
+                });
                 if (done1 === results.length - 1) {
-                    done1 = 0;
-                    var actualThings = [];
-                    for (let i1 = 0; i1 < Object.keys(priorityThings).length; i1++) {
-                        const priority = priorityThings[Object.keys(priorityThings)[i1]];
-                        if (priority.filesToDo.length !== 0) {
-                            actualThings.push(i1);
+                    fs.readFile(results[indexOfMain], function(err, data) {
+                        if (err) {
+                            done(err);
+                            return;
                         }
-                    }
-                    var onesToUse = [];
-                    var current = 0;
-                    for (let i1 = 0; i1 < actualThings.length; i1++) {
-                        const priority = priorityThings[Object.keys(priorityThings)[actualThings[i1]]];
-                        current = 0;
-                        priority.filesToDo.forEach(fileToDo => {
-                            fs.readFile(fileToDo, (err, data) => {
-                                if (err) {
-                                    done(err);
-                                }
-                                finalData += data;
-                                if (!onesToUse.includes(Object.keys(priorityThings)[actualThings[i1]])) {
-                                    done1++;
-                                    onesToUse.push(Object.keys(priorityThings)[actualThings[i1]]);
-                                }
-                                current++;
-                                if (done1 === actualThings.length && current === priority.filesToDo.length) {
-                                    fs.readFile(results[indexOfMain], (err, data) => {
-                                        if (err) {
-                                            done(err);
-                                        }
-                                        finalData += data;
-                                        done(null, finalData);
-                                    });
-                                }
-                            });
-                        });
-                    }
+                        finalData += data;
+                        done(null, finalData);
+                    });
                 }
             });
         }

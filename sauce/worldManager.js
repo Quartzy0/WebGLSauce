@@ -22,7 +22,9 @@ class World {
             }
         }
         this.entities.forEach(entity => {
-            entity.tick(deltaTime);
+            if (entity != undefined) {
+                entity.tick(deltaTime);
+            }
         });
     }
 
@@ -35,7 +37,9 @@ class World {
             }
         }
         this.entities.forEach(entity => {
-            entity.render();
+            if (entity != undefined) {
+                entity.render();
+            }
         });
     }
 
@@ -63,8 +67,8 @@ class World {
         return this.entities;
     }
 
-    addEntity(entity) {
-        this.entities.push(entity);
+    addEntity(x) {
+        this.entities.push(x);
     }
 
     removeEntity(uuid) {

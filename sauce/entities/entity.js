@@ -1,19 +1,25 @@
 class Entity {
+
     constructor(handler, textureUrl, width, height, position, name, id) {
-        this.programInfo = programInfo;
-        this.texture = loadTexture(gl, textureUrl);
-        this.gl = gl;
+        this.programInfo = handler.shaderInfo;
+        this.texture = loadTexture(handler.gl, textureUrl);
+        this.gl = handler.gl;
 
         this.modelMatrix = mat4.create();
-        this.camera = camera;
-        this.buffers = initBuffers(gl);
+        this.camera = handler.camera;
+        this.buffers = initBuffers(handler.gl, width, height);
         this.id = id;
-        this.health = 0;
+        this.health = 50;
         this.uuid = uuidv4();
         this.handler = handler;
 
         this.position = position;
         this.rotation = 0.0;
+
+        var transform = mat4.create();
+        mat4.translate(transform, transform, [this.position.x, this.position.y, this.position.z]);
+        mat4.rotate(transform, transform, this.rotation, [0, 0, 1]);
+        this.modelMatrix = transform;
     }
 
     tick(deltaTime) {

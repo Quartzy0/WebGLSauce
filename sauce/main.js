@@ -3,6 +3,7 @@ var camera;
 var inputManager;
 var drawable;
 var handler;
+var player;
 
 function main() {
     const gl = initGL("webGLCanvas", function() {
@@ -52,6 +53,7 @@ function main() {
         gl: gl
     };
 
+    player = new Player(handler, { x: 0, y: 3, z: 0 });
     world = new World(handler, 20, 20, "Boi World");
     world.setTile(0, 0, 0);
     world.setTile(1, 0, 0);
@@ -64,13 +66,24 @@ function main() {
     world.setTile(8, 0, 0);
     world.setTile(9, 0, 0);
 
+    world.entities.push(player);
+
     handler.currentWorld = world;
 
     //drawable = new TestTile(gl, programInfo, camera, inputManager);
     var then = 0;
 
+    var frameStart = 0;
+    var frames = 0;
+
     function render(now) {
         now *= 0.001;
+        if (now - frameStart >= 1.0) {
+            console.log("FPS: " + frames);
+            frames = 0;
+            frameStart = now;
+        }
+        frames++;
         const deltaTime = now - then;
         then = now;
 
@@ -96,9 +109,9 @@ function initBuffers(gl, width, height) {
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    const positions = [-1.0, 1.0,
-        1.0, 1.0, -1.0, -1.0,
-        1.0, -1.0
+    const positions = [-width, height,
+        width, height, -width, -height,
+        width, -height
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
@@ -108,9 +121,9 @@ function initBuffers(gl, width, height) {
 
     const textureCoordinates = [
         0.0, 0.0,
-        width, 0.0,
-        0.0, height,
-        width, height
+        1.0, 0.0,
+        0.0, 1.0,
+        1.0, 1.0
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
@@ -160,6 +173,10 @@ function initGL(canvasID, errorCallback) {
         errorCallback();
         return null;
     }
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     inputManager = new InputManager();

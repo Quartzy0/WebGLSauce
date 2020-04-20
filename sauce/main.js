@@ -5,6 +5,24 @@ var drawable;
 var handler;
 var player;
 
+var paused = false;
+
+Array.prototype.reshape = function(rows, cols) {
+    var copy = this.slice(0); // Copy all elements.
+    this.length = 0; // Clear out existing array.
+
+    for (var r = 0; r < rows; r++) {
+        var row = [];
+        for (var c = 0; c < cols; c++) {
+            var i = r * cols + c;
+            if (i < copy.length) {
+                row.push(copy[i]);
+            }
+        }
+        this.push(row);
+    }
+};
+
 function main() {
     const gl = initGL("webGLCanvas", function() {
         alert("WebGL not supported!");
@@ -53,65 +71,68 @@ function main() {
         gl: gl
     };
 
-    player = new Player(handler, { x: 0, y: 3, z: 0 });
-    world = new World(handler, 20, 20, "Boi World");
-    world.setTile(0, 0, 0);
-    world.setTile(1, 0, 0);
-    world.setTile(2, 0, 0);
-    world.setTile(3, 0, 0);
-    world.setTile(4, 0, 0);
-    world.setTile(5, 0, 0);
-    world.setTile(6, 0, 0);
-    world.setTile(7, 0, 0);
-    world.setTile(8, 0, 0);
-    world.setTile(9, 0, 0);
+    player = new Player(handler, { x: 0, y: 10, z: 0 });
+    getResource("/assets/levels/demoLevel.json", function(res) {
+        world = new World(handler, JSON.parse(res));
+        //world = new World(handler, 47, 23, "Demo Level", { x: 16, y: 16 });
 
-    world.entities.push(player);
+        world.setTile(0, 0, 0);
+        world.setTile(1, 0, 0);
+        world.setTile(2, 0, 0);
+        world.setTile(3, 0, 0);
+        world.setTile(4, 0, 0);
+        world.setTile(5, 0, 0);
+        world.setTile(6, 0, 0);
+        world.setTile(7, 0, 0);
+        world.setTile(8, 0, 0);
+        world.setTile(9, 0, 0);
 
-    handler.currentWorld = world;
+        world.entities.push(player);
 
-    //drawable = new TestTile(gl, programInfo, camera, inputManager);
-    var then = 0;
+        handler.currentWorld = world;
 
-    var frameStart = 0;
-    var frames = 0;
+        //drawable = new TestTile(gl, programInfo, camera, inputManager);
+        var then = 0;
 
-    function render(now) {
-        now *= 0.001;
-        if (now - frameStart >= 1.0) {
-            console.log("FPS: " + frames);
-            frames = 0;
-            frameStart = now;
+        var frameStart = 0;
+        var frames = 0;
+
+        function render(now) {
+            now *= 0.001;
+            if (now - frameStart >= 1.0) {
+                console.log("FPS: " + frames);
+                frames = 0;
+                frameStart = now;
+            }
+            frames++;
+            const deltaTime = now - then;
+            then = now;
+
+            if (!paused) {
+                gl.clearColor(0.5, 0.5, 0.5, 1.0);
+                gl.clearDepth(1.0);
+                gl.enable(gl.DEPTH_TEST);
+                gl.depthFunc(gl.LEQUAL);
+
+                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                handler.currentWorld.tick(deltaTime);
+                handler.currentWorld.render();
+            }
+
+            requestAnimationFrame(render);
         }
-        frames++;
-        const deltaTime = now - then;
-        then = now;
-
-        gl.clearColor(0.5, 0.5, 0.5, 1.0);
-        gl.clearDepth(1.0);
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
-
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        handler.currentWorld.tick(deltaTime);
-        handler.currentWorld.render();
-
-        //drawable.tick(deltaTime);
-        //drawable.render();
 
         requestAnimationFrame(render);
-    }
-
-    requestAnimationFrame(render);
+    });
 }
 
 function initBuffers(gl, width, height) {
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    const positions = [-width, height,
-        width, height, -width, -height,
-        width, -height
+    const positions = [0, height,
+        width, height, 0, 0,
+        width, 0
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);

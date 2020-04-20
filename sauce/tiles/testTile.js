@@ -1,6 +1,6 @@
 class TestTile extends Tile {
     constructor(gl, programInfo, camera, inputManager) {
-        super(gl, "brick_blue.png", programInfo, camera, 1);
+        super(gl, "brick_blue.png", programInfo, camera, true, 1);
         this.inputManager = inputManager;
 
         this.speed = 1;

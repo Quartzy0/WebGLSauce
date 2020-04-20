@@ -1,16 +1,18 @@
 class Tile {
-    constructor(handler, textureUrl, id) {
+    constructor(handler, textureUrl, colidable, friction, id) {
+        this.colidable = colidable;
         this.programInfo = handler.shaderInfo;
         this.texture = loadTexture(handler.gl, textureUrl);
         this.gl = handler.gl;
 
         this.modelMatrix = mat4.create();
         this.camera = handler.camera;
-        this.buffers = initBuffers(this.gl, 1.0, 1.0);
+        this.buffers = initBuffers(this.gl, 2, 2);
         this.id = id;
 
         this.position = { x: 0.0, y: 0.0, z: 0.0 };
         this.rotation = 0.0;
+        this.friction = friction;
     }
 
     getId() {

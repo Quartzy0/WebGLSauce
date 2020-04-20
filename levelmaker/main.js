@@ -24,30 +24,51 @@ function drawBoard() {
     context.stroke();
 }
 
+function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while (i--) arr[length - 1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
+
 drawBoard();
 
-var tileGrid = [];
+var tileGrid = createArray(Math.floor(bh / 40), Math.floor(bw / 40));
 var currentID = 0;
-var imgs = [document.getElementById("brick_blue"), document.getElementById("sauce")];
+var spawnpoint = { x: 0, y: 0 };
+var imgs = [document.getElementById("brick_blue"), document.getElementById("sauce"), document.getElementById("brick_gray")];
 
 var mouseDown = false;
+var spawnpointImg = document.getElementById("spawnpoint");
 
 canvas.addEventListener("mousedown", event => {
     mouseDown = true;
-    var x = parseInt(event.clientX / 40, 10);
-    var y = parseInt(event.clientY / 40, 10);
-    console.log(x + " " + y + " " + ((x + 1) * (y + 1) - 1));
-    tileGrid[(x + 1) * (y + 1) - 1] = currentID;
-    context.drawImage(imgs[currentID], x * 40, y * 40, 40, 40);
+    var x = (event.clientX / 40) | 0;
+    var y = (event.clientY / 40) | 0;
+
+    if (currentID == 0) {
+        context.clearRect(spawnpoint.x * 40 + 1, spawnpoint.y * 40 + 1, 39, 39);
+        spawnpoint = { x: x, y: y };
+        context.drawImage(spawnpointImg, x * 40 + 1, y * 40 + 1, 39, 39);
+    } else if (!(x === spawnpoint.x && y === spawnpoint.y)) {
+        console.log(x + " " + y + " " + ((x + 1) * (y + 1) - 1));
+        tileGrid[y][x] = (currentID - 1);
+        context.drawImage(imgs[currentID - 1], x * 40 + 1, y * 40 + 1, 39, 39);
+    }
 });
 
 canvas.addEventListener("mousemove", event => {
-    if (mouseDown) {
-        var x = parseInt(event.clientX / 40, 10);
-        var y = parseInt(event.clientY / 40, 10);
-        if (tileGrid[(x + 1) * (y + 1) - 1] != 0) {
-            tileGrid[(x + 1) * (y + 1) - 1] = currentID;
-            context.drawImage(imgs[currentID], x * 40, y * 40, 40, 40);
+    if (mouseDown && currentID != 0) {
+        var x = (event.clientX / 40) | 0;
+        var y = (event.clientY / 40) | 0;
+        if (tileGrid[y][x] != currentID - 1 && !(x === spawnpoint.x && y === spawnpoint.y)) {
+            tileGrid[y][x] = currentID - 1;
+            context.drawImage(imgs[currentID - 1], x * 40 + 1, y * 40 + 1, 39, 39);
         }
     }
 });
@@ -59,21 +80,12 @@ function changeTile(value) {
 }
 
 function exportWorld() {
-    var worldObj = { w: (bw / 40) | 0, h: (bh / 40) | 0, name: document.getElementById("name").value, tiles: tileGrid };
+    var worldObj = { w: (bw / 40) | 0, h: (bh / 40) | 0, name: document.getElementById("name").value, tiles: tileGrid, spawnX: spawnpoint.x, spawnY: spawnpoint.y };
 
-    $.ajax({
-        type: "POST",
-        url: "/saveLevel",
-        data: { name: worldObj.name, data: worldObj },
-        dataType: "application/json",
-        success: function(response) {
-            console.log(response);
-            if (response === "Success") {
-                window.open(window.location.origin + "/getLevel/" + worldObj.name);
-            } else {
-                document.getElementById("err").innerText = response;
-            }
-        }
+    navigator.clipboard.writeText(JSON.stringify(worldObj)).then(function() {
+        console.log('Async: Copying to clipboard was successful!');
+    }, function(err) {
+        console.error('Async: Could not copy text: ', err);
     });
 }
 

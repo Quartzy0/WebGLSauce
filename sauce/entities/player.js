@@ -1,21 +1,19 @@
 class Player extends Entity {
     constructor(handler, position) {
-        super(handler, 'player.png', 1, 2, position, "Player", 0);
+        super(handler, 'player.png', 2.0, 4.0, position, "Player", 0);
+        this.walkSpeed = 100;
     }
 
     tick(deltaTime) {
-        var moveAmount = 20 * deltaTime;
         if (this.handler.inputManager.isKeyDown("KeyA")) {
-            this.setPosition(this.getPosition().x - moveAmount, this.getPosition().y, this.getPosition().z);
+            this.acceleration.x = this.acceleration.x <= -this.walkSpeed ? this.acceleration.x : this.acceleration.x - this.walkSpeed;
         }
         if (this.handler.inputManager.isKeyDown("KeyD")) {
-            this.setPosition(this.getPosition().x + moveAmount, this.getPosition().y, this.getPosition().z);
+            this.acceleration.x = this.acceleration.x >= this.walkSpeed ? this.acceleration.x : this.acceleration.x + this.walkSpeed;
         }
         if (this.handler.inputManager.isKeyDown("KeyW")) {
-            this.setPosition(this.getPosition().x, this.getPosition().y + moveAmount, this.getPosition().z);
+            this.velocity.y = 7.5;
         }
-        if (this.handler.inputManager.isKeyDown("KeyS")) {
-            this.setPosition(this.getPosition().x, this.getPosition().y - moveAmount, this.getPosition().z);
-        }
+        super.tick(deltaTime);
     }
 }

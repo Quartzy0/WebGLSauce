@@ -11,13 +11,17 @@
 <body style="margin: 0 !important; padding: 0 !important; overflow: hidden;">
     <div style="display: none;">
         <img src="/assets/textures/brick_blue.png" id="brick_blue">
+        <img src="/assets/textures/brick_gray.png" id="brick_gray">
         <img src="/assets/textures/sauce.png" id="sauce">
+        <img src="/assets/textures/spawnpoint.png" id="spawnpoint">
     </div>
 
     <div id="overlay" style="position: fixed; z-index: 2; cursor: pointer;">
         <select id="tileDropdown" onchange="changeTile(value)">
-            <option value="0">Test</option>
-            <option value="1">Test2</option>
+            <option value="0">Spawnpoint</option>
+            <option value="1">Brick Blue</option>
+            <option value="3">Brick Gray</option>
+            <option value="2">Sauce</option>
         </select>
         <input type="text" id="name" value="World name">
         <button id="exportWorld">Export world</button>

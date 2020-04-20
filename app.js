@@ -26,7 +26,7 @@ const obferscationConfig = {
     unicodeEscapeSequence: false
 };
 
-const shoudObfercsteCode = true;
+const shoudObfercsteCode = false;
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
@@ -42,54 +42,15 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + "/index.html");
 });
 
-app.get('/getLevel/*', function(req, res) {
-    let name = req.url.replace("/getLevel/", "");
-    fs.access(__dirname + "/tmp/levels/" + name + ".json", error => {
-        if (!error) {
-            var filePath = path.join(__dirname, "/tmp/levels/" + name + ".json");
-            var stat = fs.statSync(filePath);
-
-            res.writeHead(200, {
-                'Content-Type': 'application/json',
-                'Content-Length': stat.size,
-                'Content-Disposition': 'attachment; filename=' + name + ".json"
-            });
-
-            var readStream = fs.createReadStream(filePath);
-            readStream.pipe(response);
-        } else {
-            res.status(404).send("Level not found");
-        }
-    });
-});
-
 app.get('/levelmaker', function(req, res) {
     res.sendFile(__dirname + "/levelmaker/index.html");
 });
 
-app.post('/saveLevel', function(req, res) {
-    let name = req.body.name;
-    let data = req.body.data;
-    fs.access(__dirname + "/tmp/levels/" + name + ".json", error => {
-        if (error) {
-            fs.writeFile(__dirname + "/tmp/levels/" + name + ".json", data, function(err) {
-                if (err) {
-                    res.send("Un unknown error occured");
-                    throw err;
-                }
-                res.status(200).send("Success");
-            });
-        } else {
-            res.send("That level already exists");
-        }
-    });
-});
-
 app.get('/assets/*/*', function(req, res) {
-    const name = req.url.replace("/assets/", "");
-    fs.access(__dirname + "/res/" + name, error => {
+    const name = req.url.replace("/assets/", "/res/");
+    fs.access(__dirname + name, error => {
         if (!error) {
-            res.sendFile(__dirname + "/res/" + name);
+            res.sendFile(__dirname + name);
         } else {
             res.status(404).send("Asset does not exist!");
         }

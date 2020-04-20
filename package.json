@@ -1,25 +1,26 @@
 {
-  "name": "webglsauce",
-  "version": "1.0.0",
-  "description": "WebGL game engine",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Quartzy0/WebGLSauce.git"
-  },
-  "author": "Quartzy0",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Quartzy0/WebGLSauce/issues"
-  },
-  "homepage": "https://github.com/Quartzy0/WebGLSauce#readme",
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "ejs": "^3.0.1",
-    "express": "^4.17.1",
-    "javascript-obfuscator": "^0.24.6"
-  }
+    "name": "webglsauce",
+    "version": "1.0.0",
+    "description": "WebGL game engine",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Quartzy0/WebGLSauce.git"
+    },
+    "author": "Quartzy0",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Quartzy0/WebGLSauce/issues"
+    },
+    "homepage": "https://github.com/Quartzy0/WebGLSauce#readme",
+    "dependencies": {
+        "acorn": "^7.1.1",
+        "body-parser": "^1.19.0",
+        "ejs": "^3.0.2",
+        "express": "^4.17.1",
+        "javascript-obfuscator": "^0.27.4"
+    }
 }

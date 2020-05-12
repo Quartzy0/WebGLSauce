@@ -6,7 +6,7 @@ class World {
             this.tiles = createArray(height, width);
             this.entities = [];
             this.name = name;
-            this.gravity = 20;
+            this.gravity = 1;
 
             this.programInfo = handler.programInfo;
             this.camera = handler.camera;
@@ -20,8 +20,8 @@ class World {
             this.tiles = toTilesArr(width.tiles);
             this.entities = [];
             this.name = width.name;
-            this.gravity = 20;
-            this.spawnpoint = { x: (width.spawnX * this.tileSize), y: (width.spawnY * this.tileSize) };
+            this.gravity = 1;
+            this.spawnpoint = { x: 15, y: 15 };
 
             this.programInfo = handler.programInfo;
             this.camera = handler.camera;

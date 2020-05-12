@@ -73,7 +73,7 @@ class Entity {
         let newPosY = this.position.y + (newVelocityY * deltaTime);
         let newPosZ = this.position.z + (newVelocityZ * deltaTime);
 
-        if (this.rectColidingWithWorld({ x: newPosX, y: newPosY, width: this.width, height: this.health })) {
+        /*if (this.rectColidingWithWorld({ x: newPosX, y: newPosY, width: this.width, height: this.health })) {
             newVelocityX = this.velocity.x;
             newAccelerationX = this.acceleration.x;
             newPosX = this.position.x;
@@ -85,7 +85,10 @@ class Entity {
             newVelocityZ = this.velocity.z;
             newAccelerationZ = this.acceleration.z;
             newPosZ = this.position.z;
-        }
+        }*/
+
+        this.velocity = { x: newVelocityX, y: newVelocityY, z: newVelocityZ };
+        this.acceleration = { x: newAccelerationX, y: newAccelerationY, z: newAccelerationZ };
 
         this.setPosition(newPosX, newPosY, newPosZ);
     }

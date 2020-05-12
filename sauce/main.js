@@ -4,6 +4,7 @@ var inputManager;
 var drawable;
 var handler;
 var player;
+var enemy;
 
 var paused = false;
 
@@ -72,22 +73,13 @@ function main() {
     };
 
     player = new Player(handler, { x: 0, y: 10, z: 0 });
+    enemy = new DemoEnemy(handler, { x: 0, y: 10, z: 0 });
     getResource("/assets/levels/demoLevel.json", function(res) {
         world = new World(handler, JSON.parse(res));
         //world = new World(handler, 47, 23, "Demo Level", { x: 16, y: 16 });
 
-        world.setTile(0, 0, 0);
-        world.setTile(1, 0, 0);
-        world.setTile(2, 0, 0);
-        world.setTile(3, 0, 0);
-        world.setTile(4, 0, 0);
-        world.setTile(5, 0, 0);
-        world.setTile(6, 0, 0);
-        world.setTile(7, 0, 0);
-        world.setTile(8, 0, 0);
-        world.setTile(9, 0, 0);
-
         world.entities.push(player);
+        world.entities.push(enemy);
 
         handler.currentWorld = world;
 
@@ -189,6 +181,8 @@ function loadShader(gl, type, source) {
 
 function initGL(canvasID, errorCallback) {
     const canvas = document.getElementById(canvasID);
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     var gl = canvas.getContext("webgl");
     if (gl == null) {
         errorCallback();

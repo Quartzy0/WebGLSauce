@@ -11,7 +11,7 @@ class Camera {
         this.viewMatrix = mat4.create();
         this.projViewMatrix = mat4.create();
 
-        this.position = { x: 0.0, y: 0, z: -50.0 };
+        this.position = { x: -43.0, y: -10, z: -50.0 };
         this.rotation = 0.0;
 
         var transform = mat4.create();
